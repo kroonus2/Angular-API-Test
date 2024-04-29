@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
+import { PostService } from '../services/post.service';
 
 @Component({
   selector: 'app-post',
@@ -10,19 +11,23 @@ import { Component, OnInit, inject } from '@angular/core';
 })
 export class PostComponent implements OnInit {
 
-  http = inject(HttpClient);
+  // http = inject(HttpClient);
+  private postService = inject(PostService);
   posts: any = [];
-
+  //Quando iniciar...
   ngOnInit(): void {
-    this.fetchPosts();
+    this.loadPosts();
   }
-
-  fetchPosts() {
-    this.http.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
-      .subscribe((posts: any) => {
-        console.log(posts);
+  //Metodo para obter os posts do PostService, onde é feito o get da url
+  loadPosts() {
+    this.postService.getPosts().subscribe(({
+      next: (posts: any) => {
         this.posts = posts;
-      });
+        console.log("Posts fetched successfully");
+      },
+      error: (error) => {
+        console.log("Error fetching posts: ", error);
+      }
+    }));
   }
 }
-//Fazendo o fetch dos posts e limitando para 10 no maximo
